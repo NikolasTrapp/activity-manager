@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class ActivityManagerApplication  {
-	
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(ActivityManagerApplication.class, args);
