@@ -1,9 +1,10 @@
 package com.nikolastrapp.activitymanager.services.exceptions;
-import java.io.Serializable;
-import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.time.Instant;
 
 @Data
 public class StandardError implements Serializable {

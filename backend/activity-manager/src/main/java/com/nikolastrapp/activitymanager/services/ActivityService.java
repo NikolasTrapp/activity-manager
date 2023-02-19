@@ -16,41 +16,41 @@ public class ActivityService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    public List<Activity> findAll(){
+    public List<Activity> findAll() {
         return activityRepository.findAll();
     }
 
-    public Activity findById(Long id) throws EntityNotFoundException{
+    public Activity findById(Long id) throws EntityNotFoundException {
         Optional<Activity> optionalActivity = activityRepository.findById(id);
-        if (optionalActivity.isEmpty()){
+        if (optionalActivity.isEmpty()) {
             throw new ResourceNotFoundException("No activity found with id: " + id);
         }
         return optionalActivity.get();
     }
 
-    public List<Activity> findByTitle(String title) throws EntityNotFoundException{
+    public List<Activity> findByTitle(String title) throws EntityNotFoundException {
         Optional<List<Activity>> optionalActivity = activityRepository.findByTitle(title);
-        if (optionalActivity.isEmpty()){
+        if (optionalActivity.isEmpty()) {
             throw new ResourceNotFoundException("Any activity found with title: " + title);
         }
         return optionalActivity.get();
     }
 
-    public Activity addActivity(Activity activity){
+    public Activity addActivity(Activity activity) {
         return activityRepository.save(activity);
     }
 
-    public void deleteActivity(Long id){
+    public void deleteActivity(Long id) {
         Optional<Activity> optionalActivity = activityRepository.findById(id);
-        if (optionalActivity.isEmpty()){
+        if (optionalActivity.isEmpty()) {
             throw new ResourceNotFoundException("No activity found with id: " + id);
         }
         activityRepository.deleteById(id);
     }
 
-    public Activity updateActivity(Long id, Activity activity){
+    public Activity updateActivity(Long id, Activity activity) {
         Optional<Activity> optionalActivity = activityRepository.findById(id);
-        if (optionalActivity.isEmpty()){
+        if (optionalActivity.isEmpty()) {
             throw new ResourceNotFoundException("No activity found with id: " + id);
         }
 
