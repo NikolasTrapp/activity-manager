@@ -24,53 +24,108 @@ export class AppComponent implements OnInit {
 
   constructor(private activityService: ActivityService, private categoryService: CategoryService) {
     this.currentDate = new Date();
-    
+
   }
 
-  
+
   ngOnInit(): void {
     this.container = document.querySelector("#calendar-container");
     this.activityService.getActivities().subscribe((response) => {
       this.activities = response;
+      this.init();
     });
-    this.categoryService.getCategories().subscribe((response) =>{
+    this.categoryService.getCategories().subscribe((response) => {
       this.categories = response;
     });
-    this.init();
 
   }
 
   sendActivity(addForm: NgForm): void {
     console.log(addForm.value);
-    
+
   }
-  
+
   showDialog() {
     this.display = true;
   }
 
   private render() {
-    const table = document.createElement("table");
-    table.classList.add("week-calendar");
-    const dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    for (let i = 0; i < 24; i++) {
-      const row = table.insertRow();
-      for (let j = 0; j < 7; j++) {
-        const cell = row.insertCell();
-        const date = new Date(this.currentDate);
-        const currentDayOfWeek = date.getDay();
-        const diff = j - currentDayOfWeek;
-        date.setDate(date.getDate() + diff);
-        date.setHours(i);
-        const div = document.createElement("div");
-        div.classList.add("cell");
-        const formattedDate = `${dayOfWeek[date.getDay()]} ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-        div.innerText = formattedDate;
-        cell.appendChild(div);
+    this.container!.innerHTML = "";
+    this.createHeader();
+    for (let hour = 0; hour < 48; hour++) {
+      const formatedHour = `${(hour % 2 == 1) ? ("0" + (Math.floor(hour/2))).slice(-2) + ":30" : ("0" + (hour/2)).slice(-2) + ":00".slice(-3)}`;
+      const row = document.createElement("div");
+      row.className = "row";
+      for (let day = 0; day < 8; day++) {
+        const cell = document.createElement("div");
+        cell.className = "col border text-center";
+        if (day == 0) {
+          cell.innerText = formatedHour;
+        } else { 
+          const date = this.getDate(day);
+          cell.setAttribute("day", `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}T${formatedHour}:00`);
+        }
+        row.appendChild(cell);
       }
+      this.container?.appendChild(row);
     }
+    this.loadActivities();
+  }
+
+  private getDate(day: number): Date{
+    const date = new Date(this.currentDate);
+    const currendDayOfWeek = date.getDay();
+    const difference = day - 1 - currendDayOfWeek;
+    date.setDate(date.getDate() + difference);
+    return date;
+  }
+
+  private createHeader(): void {
+    const dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const row = document.createElement("div");
+    row.className = "row";
+    for (let day = 0; day < 8; day ++){
+      const cell = document.createElement("div");
+      cell.className = "col border text-center";
+      if (day == 0){
+        cell.innerText = "Hours";
+      } else {
+        const date = this.getDate(day);
+        cell.innerText = `${dayOfWeek[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+      }
+      row.appendChild(cell);
+    }
+    this.container?.appendChild(row);
     
-    this.container!.appendChild(table);
+  }
+
+  private loadActivities() {
+    for (let activity of this.activities) {
+      const cell = document.querySelector(`[day="${activity.startDate}"]`);
+      if (cell != undefined){
+        cell.append(activity.title)
+        cell.setAttribute("style", "background-color: " + activity.category.color)
+        const dateControl = new Date(activity.startDate);
+        for (let i = 0; i < this.getNumberOfDivisions(activity.startDate, activity.endDate); i++){
+          dateControl.setTime(dateControl.getTime() + 30 * 60000);
+          const cell = document.querySelector(`[day="${this.convertDateToString(dateControl)}"]`);
+          cell?.setAttribute("style", "background-color: " + activity.category.color)
+        }
+        
+        
+      }    
+    }
+  }
+
+  private convertDateToString(date: Date) : string{
+    const day = date.toLocaleDateString().split("/");
+    return `${day[2]}-${day[1]}-${day[0]}T${date.toLocaleTimeString()}`;
+  }
+
+  private getNumberOfDivisions(date1: Date, date2: Date): number{
+    const dt1 = new Date(date1);
+    const dt2 = new Date(date2);
+    return (dt2.getTime() - dt1.getTime()) / 60000 / 30; 
   }
 
   private previousWeek() {

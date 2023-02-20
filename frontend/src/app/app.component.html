@@ -1,5 +1,5 @@
 <ul>
-    <li *ngFor="let activity of activities">{{ activity.title }}</li>
+    <li *ngFor="let activity of activities">{{ activity.startDate }}</li>
 </ul>
 
 <p-dialog header="Title" position="center" [(visible)]="display" [draggable]="false" [style]="{width: '25vw'}">
@@ -38,8 +38,13 @@
     </form>
 </p-dialog>
 
-<div id="calendar-container">
-
-</div>
 <button id="prev-week-button">Previous Week</button>
 <button id="next-week-button">Next Week</button>
+<div class="container">
+    <div class="calendar-header">
+
+    </div>
+    <div id="calendar-container">
+        
+    </div>
+</div>

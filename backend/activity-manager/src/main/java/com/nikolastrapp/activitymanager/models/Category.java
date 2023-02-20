@@ -25,12 +25,16 @@ public class Category implements Serializable {
     @Column(nullable = false, unique = true, length = 255)
     private String name;
 
+    @Column(nullable = false, unique = true, length = 255)
+    private String color;
+
     @OneToMany(mappedBy = "category")
     @JsonIgnore
     private List<Activity> activities = new ArrayList<>();
 
     public void update(Category other) {
         this.name = other.getName();
+        this.color = other.getColor();
     }
 
 }

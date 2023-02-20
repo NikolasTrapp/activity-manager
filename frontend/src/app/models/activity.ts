@@ -5,6 +5,6 @@ export interface Activity{
     title: string;
     description: string;
     startDate: Date;
-    finalDate: Date;
+    endDate: Date;
     category: Category;
 }
