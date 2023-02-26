@@ -13,6 +13,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {TableModule} from 'primeng/table';
 import {AccordionModule} from 'primeng/accordion';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import {ToastModule} from 'primeng/toast';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -38,7 +39,8 @@ import { TransformDatePipe } from './transform-date.pipe';
     DropdownModule,
     TableModule,
     AccordionModule,
-    InputTextareaModule
+    InputTextareaModule,
+    ToastModule
     // MessageModule
   ],
   providers: [],

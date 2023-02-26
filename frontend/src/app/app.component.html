@@ -19,12 +19,12 @@
                     <span>End date: </span>
                     <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
                 </div>
-                <button type="submit" class="p-button p-button-success" icon="pi pi-filter" pButton
-                    label="Send" [disabled]="queryPeriodForm.invalid"></button>
+                <button type="submit" class="p-button p-button-success" icon="pi pi-filter" pButton label="Send"
+                    [disabled]="queryPeriodForm.invalid"></button>
             </div>
         </form>
     </div>
-    
+
 </p-toolbar>
 
 <!-- Table of activities -->
@@ -52,9 +52,20 @@
             <td>
                 {{activity.description}}
             </td>
-            <td><button pButton label="Remove" icon="pi pi-trash" type="submit" class="p-button p-button-danger" (click)="deleteActivity(activity)"></button></td>
-            <td><button pButton label="Update" icon="pi pi-pencil" type="submit" class="p-button p-button-warning" (click)="setUpdateValues(activity)"></button></td>
+            <td><button pButton label="Remove" icon="pi pi-trash" type="button" class="p-button p-button-danger"
+                    (click)="deleteActivity(activity)"></button></td>
+            <td><button pButton label="Update" icon="pi pi-pencil" type="button" class="p-button p-button-warning"
+                    (click)="setUpdateValues(activity)"></button></td>
         </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+            <button pButton style="margin: 0 10px;" class="p-button-rounded p-button-warning" icon="pi pi-refresh"
+                (click)="refreshTable()"></button>
+            <span>
+                In total there are {{activities ? activities.length : 0 }} activities.
+            </span>
+        </div>
     </ng-template>
 </p-table>
 
@@ -68,7 +79,8 @@
         </div>
         <div>
             <label for="description">Description</label>
-            <textarea pInputTextarea name="description" id="description" maxlength="255" ngModel required="false"></textarea>
+            <textarea pInputTextarea name="description" id="description" maxlength="255" ngModel
+                required="false"></textarea>
         </div>
         <div>
             <label for="startDate">Start date</label>
@@ -84,19 +96,22 @@
                 [(ngModel)]="selectedEntity" (onItemClick)="onEntityClick($event)">
                 <ng-template pTemplate="selectedItem">
                     <div class="category-item category-item-value " *ngIf="selectedEntity">
-                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=selectedEntity.color></div>
+                        <div style="width: 5px; height: 100; margin-right: 5px;"
+                            [style.background-color]=selectedEntity.color></div>
                         <div>{{selectedEntity.name}}</div>
                     </div>
                 </ng-template>
                 <ng-template let-category pTemplate="item">
                     <div class="category-item">
-                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=category.color></div>
+                        <div style="width: 5px; height: 100; margin-right: 5px;"
+                            [style.background-color]=category.color></div>
                         <div>{{category.name}}</div>
                     </div>
                 </ng-template>
             </p-dropdown>
-        </div>      
-        <button type="submit" [disabled]="activityForm.invalid" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+        </div>
+        <button type="submit" [disabled]="activityForm.invalid" class="p-button p-button-success" pButton label="Send"
+            [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 
@@ -110,11 +125,13 @@
         </div>
         <div>
             <label for="description">Description</label>
-            <textarea pInputTextarea name="description" id="description" maxlength="255" ngModel={{updatedActivity?.description}} required="false"></textarea>
+            <textarea pInputTextarea name="description" id="description" maxlength="255"
+                ngModel={{updatedActivity?.description}} required="false"></textarea>
         </div>
         <div>
             <label for="startDate">Start date</label>
-            <input ngModel={{updatedActivity?.startDate}} name="startDate" type="datetime-local" pInputText required="true">
+            <input ngModel={{updatedActivity?.startDate}} name="startDate" type="datetime-local" pInputText
+                required="true">
         </div>
         <div>
             <label for="endDate">End date</label>
@@ -126,19 +143,22 @@
                 [(ngModel)]="selectedEntity" (onItemClick)="onEntityClick($event)">
                 <ng-template pTemplate="selectedItem">
                     <div class="category-item category-item-value " *ngIf="selectedEntity">
-                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=selectedEntity.color></div>
+                        <div style="width: 5px; height: 100; margin-right: 5px;"
+                            [style.background-color]=selectedEntity.color></div>
                         <div>{{selectedEntity.name}}</div>
                     </div>
                 </ng-template>
                 <ng-template let-category pTemplate="item">
                     <div class="category-item">
-                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=category.color></div>
+                        <div style="width: 5px; height: 100; margin-right: 5px;"
+                            [style.background-color]=category.color></div>
                         <div>{{category.name}}</div>
                     </div>
                 </ng-template>
             </p-dropdown>
-        </div>      
-        <button type="submit" [disabled]="updateForm.invalid" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+        </div>
+        <button type="submit" [disabled]="updateForm.invalid" class="p-button p-button-success" pButton label="Send"
+            [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 
@@ -152,9 +172,11 @@
         </div>
         <div>
             <label for="color">Color</label>
-            <input ngModel id="color" name="color" type="text" placeholder="e.g. 'red' or '#f0fff0'" pInputText required="true">
-        </div> 
-        <button type="submit" class="p-button p-button-success" [disabled]="categoryForm.invalid" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+            <input ngModel id="color" name="color" type="text" placeholder="e.g. 'red' or '#f0fff0'" pInputText
+                required="true">
+        </div>
+        <button type="submit" class="p-button p-button-success" [disabled]="categoryForm.invalid" pButton label="Send"
+            [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 
@@ -173,7 +195,8 @@
         </div>
         <div id="categoriesMinutes">
         </div>
-        <button type="submit" [disabled]="categoryMinutes.invalid" class="p-button p-button-success" pButton label="Search" [style]="{margin: '10px 0'}"></button>
+        <button type="submit" [disabled]="categoryMinutes.invalid" class="p-button p-button-success" pButton
+            label="Search" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
-<p-messages id="msg" [style]="{bottom: '0'}" [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
+<p-toast></p-toast>

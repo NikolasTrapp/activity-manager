@@ -32,13 +32,18 @@ export class AppComponent implements OnInit {
     private messageService: MessageService, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.activityService.getActivities().subscribe((response) => {
-      this.activities = response;
-    });
+    this.refreshTable();
     this.categoryService.getCategories().subscribe((response) => {
       this.categories = response;
       this.selectedEntity = this.categories[0];
     });    
+  }
+
+  refreshTable(){
+    this.activityService.getActivities().subscribe((response) => {
+      this.activities = response;
+    });
+    this.cd.detectChanges();
   }
 
   sendActivity(addForm: NgForm): void {
@@ -114,6 +119,8 @@ export class AppComponent implements OnInit {
       this.activities = this.activities.map(a => (a.id == response.id) ? response : a);
       this.displayUpdateActivityDialog = false;
       this.cd.detectChanges();
+      form.controls["title"].reset();
+      form.controls["description"].reset();
     }, (error: HttpErrorResponse) => {
       this.addSingle("error", error.error, error.message);
     })
