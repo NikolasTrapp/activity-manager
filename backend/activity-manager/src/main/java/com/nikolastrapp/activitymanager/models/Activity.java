@@ -24,10 +24,10 @@ public class Activity implements Serializable {
     private String title;
     @Column(nullable = true, unique = false, length = 255)
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Brazil/East")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Brazil/East")
     @Column(nullable = false)
     private LocalDateTime startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Brazil/East")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Brazil/East")
     @Column(nullable = false)
     private LocalDateTime endDate;
 
