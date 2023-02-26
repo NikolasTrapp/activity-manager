@@ -73,7 +73,7 @@ public class ActivityController {
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteActivity(@PathVariable("id") Long id) {
         activityService.deleteActivity(id);
-        return ResponseEntity.ok().body("Activity with id " + id + " was deleted successfully");
+        return ResponseEntity.status(HttpStatus.OK).body("Activity with id '" + id + "' was deleted successfully");
     }
 
     @PutMapping(value = "/update/{id}")

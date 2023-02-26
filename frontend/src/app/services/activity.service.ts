@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Activity } from '../models/activity';
 
@@ -38,11 +38,15 @@ export class ActivityService {
     return this.http.post<Activity>(`${this.apiServerUrl}/activity/add`, activity);
   }
 
-  public updateActivity(activity: Activity): Observable<Activity> {
-    return this.http.put<Activity>(`${this.apiServerUrl}/activity/update`, activity);
+  public updateActivity(activity: Activity, id: number | string): Observable<Activity> {
+    return this.http.put<Activity>(`${this.apiServerUrl}/activity/update/${id}`, activity);
   }
 
-  public deleteActivity(activityId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiServerUrl}/activity/delete/${activityId}`);
+  public deleteActivity(activityId: number): Observable<string> {
+    return this.http.delete(`${this.apiServerUrl}/activity/delete/${activityId}`, { responseType: 'text' }).pipe(
+      map((response: any) => {
+        return response.text;
+      })
+    );
   }
 }

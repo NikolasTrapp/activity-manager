@@ -1,3 +1,4 @@
+<!-- Toolbar -->
 <p-toolbar>
     <div class="p-toolbar-group-start">
         <button pButton [style]="{margin: '0 10px'}" (click)="showActivityDialog()" class="p-button-success"
@@ -19,15 +20,14 @@
                     <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
                 </div>
                 <button type="submit" class="p-button p-button-success" icon="pi pi-filter" pButton
-                    label="Send"></button>
+                    label="Send" [disabled]="queryPeriodForm.invalid"></button>
             </div>
         </form>
     </div>
     
 </p-toolbar>
-<div style="display: flex;">
 
-</div>
+<!-- Table of activities -->
 <p-table (sortFunction)="customSort($event)" [value]="activities" [customSort]="true" [paginator]="true" [rows]="10">
     <ng-template pTemplate="header">
         <tr>
@@ -36,6 +36,9 @@
             <th>Title</th>
             <th>Category</th>
             <th>Description</th>
+            <th>Remove</th>
+            <th>Update</th>
+
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-activity>
@@ -49,11 +52,14 @@
             <td>
                 {{activity.description}}
             </td>
+            <td><button pButton label="Remove" icon="pi pi-trash" type="submit" class="p-button p-button-danger" (click)="deleteActivity(activity)"></button></td>
+            <td><button pButton label="Update" icon="pi pi-pencil" type="submit" class="p-button p-button-warning" (click)="setUpdateValues(activity)"></button></td>
         </tr>
     </ng-template>
 </p-table>
 
-<p-dialog header="Add new activity" position="center" [(visible)]="displayActivityDialog" [draggable]="false"
+<!-- Add activity modal -->
+<p-dialog header="Add new activity" position="center" [(visible)]="displayActivityDialog" [draggable]="true"
     [style]="{width: '25vw'}">
     <form #activityForm="ngForm" (ngSubmit)="sendActivity(activityForm)">
         <div>
@@ -62,7 +68,7 @@
         </div>
         <div>
             <label for="description">Description</label>
-            <textarea pInputTextarea name="description" maxlength="255" ngModel required="true"></textarea>
+            <textarea pInputTextarea name="description" id="description" maxlength="255" ngModel required="false"></textarea>
         </div>
         <div>
             <label for="startDate">Start date</label>
@@ -90,12 +96,54 @@
                 </ng-template>
             </p-dropdown>
         </div>      
-        <button type="submit" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+        <button type="submit" [disabled]="activityForm.invalid" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 
+<!-- update a activity modal -->
+<p-dialog header="Update a activity" position="center" [(visible)]="displayUpdateActivityDialog" [draggable]="true"
+    [style]="{width: '25vw'}">
+    <form #updateForm="ngForm" (ngSubmit)="updateActivity(updateForm)">
+        <div>
+            <label for="title">Title</label>
+            <input ngModel={{updatedActivity?.title}} id="title" name="title" type="text" pInputText required="true">
+        </div>
+        <div>
+            <label for="description">Description</label>
+            <textarea pInputTextarea name="description" id="description" maxlength="255" ngModel={{updatedActivity?.description}} required="false"></textarea>
+        </div>
+        <div>
+            <label for="startDate">Start date</label>
+            <input ngModel={{updatedActivity?.startDate}} name="startDate" type="datetime-local" pInputText required="true">
+        </div>
+        <div>
+            <label for="endDate">End date</label>
+            <input ngModel={{updatedActivity?.endDate}} name="endDate" type="datetime-local" pInputText required="true">
+        </div>
+        <div>
+            <label for="category">Select a category</label>
+            <p-dropdown [options]="categories" name="category" appendTo="body" optionLabel="name"
+                [(ngModel)]="selectedEntity" (onItemClick)="onEntityClick($event)">
+                <ng-template pTemplate="selectedItem">
+                    <div class="category-item category-item-value " *ngIf="selectedEntity">
+                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=selectedEntity.color></div>
+                        <div>{{selectedEntity.name}}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-category pTemplate="item">
+                    <div class="category-item">
+                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=category.color></div>
+                        <div>{{category.name}}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>      
+        <button type="submit" [disabled]="updateForm.invalid" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+    </form>
+</p-dialog>
 
-<p-dialog header="Add new category" position="center" [(visible)]="displayCategoryDialog" [draggable]="false"
+<!-- add category modal -->
+<p-dialog header="Add new category" position="center" [(visible)]="displayCategoryDialog" [draggable]="true"
     [style]="{width: '25vw'}">
     <form #categoryForm="ngForm" (ngSubmit)="sendCategory(categoryForm)">
         <div>
@@ -104,14 +152,16 @@
         </div>
         <div>
             <label for="color">Color</label>
-            <input ngModel id="color" name="color" type="text" placeholder="In english" pInputText required="true">
+            <input ngModel id="color" name="color" type="text" placeholder="e.g. 'red' or '#f0fff0'" pInputText required="true">
         </div> 
-        <button type="submit" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+        <button type="submit" class="p-button p-button-success" [disabled]="categoryForm.invalid" pButton label="Send" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 
+
+<!-- calculate minutes from categories modal -->
 <p-dialog header="Query category minutes based on period" position="center" [(visible)]="displayMinutesDialog"
-    [draggable]="false" [style]="{width: '25vw'}">
+    [draggable]="true" [style]="{width: '25vw'}">
     <form #categoryMinutes="ngForm" (ngSubmit)="calculateMinutes(categoryMinutes)">
         <div>
             <label for="startDate">Start date</label>
@@ -123,7 +173,7 @@
         </div>
         <div id="categoriesMinutes">
         </div>
-        <button type="submit" class="p-button p-button-success" pButton label="Search" [style]="{margin: '10px 0'}"></button>
+        <button type="submit" [disabled]="categoryMinutes.invalid" class="p-button p-button-success" pButton label="Search" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 <p-messages id="msg" [style]="{bottom: '0'}" [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>

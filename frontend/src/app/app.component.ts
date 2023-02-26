@@ -14,15 +14,17 @@ import { MessageService, SortEvent} from "primeng/api";
   providers: [MessageService]
 })
 export class AppComponent implements OnInit {
-
+  DEFAULT_DATE: string = new Date().toISOString().substring(0, 11) + "00:00";
   activities: Activity[] = [];
   displayActivityDialog: boolean = false;
   displayCategoryDialog: boolean = false;
   displayMinutesDialog: boolean = false;
+  displayUpdateActivityDialog: boolean = false;
   categories: Category[] = [];
   categoriesMinutes = [];
-  startDate = new Date().toISOString().substring(0, 11) + "00:00";
-  endDate = new Date().toISOString().substring(0, 11) + "00:00";
+  startDate = this.DEFAULT_DATE
+  endDate = this.DEFAULT_DATE;
+  updatedActivity: Activity | null = null;
   
   selectedEntity: Category;
   
@@ -36,22 +38,19 @@ export class AppComponent implements OnInit {
     this.categoryService.getCategories().subscribe((response) => {
       this.categories = response;
       this.selectedEntity = this.categories[0];
-    });
-    console.log(new Date().toISOString().substring(0, 11));
-    
+    });    
   }
 
   sendActivity(addForm: NgForm): void {
     addForm.value.category = this.selectedEntity
     this.clear();
-    if (!addForm.valid){
-      this.addSingle("warn", "you left an empty field", "");
-      return;
-    }
     this.activityService.addActivity(addForm.value).subscribe((response) => {
       this.addSingle("success", "Activity registered!", response.title);
       this.activities.push(response);
       this.cd.detectChanges();
+      addForm.controls["title"].reset();
+      addForm.controls["description"].reset();
+      this.displayActivityDialog = false;
     }, (error: HttpErrorResponse) => {      
       this.addSingle("error", error.error, "");
     });
@@ -59,14 +58,11 @@ export class AppComponent implements OnInit {
 
   sendCategory(form: NgForm): void {
     this.clear();
-    if (!form.valid){
-      this.addSingle("warn", "you left an empty field", "");
-      return;
-    }
     this.categoryService.addCategory(form.value).subscribe((response) => {
       this.addSingle("success", "Category registered!", response.name);
       this.categories.push(response);
       this.cd.detectChanges();
+      this.displayCategoryDialog = false;
     }, (error: HttpErrorResponse) => {
       this.addSingle("error", error.error, "");
     });
@@ -74,10 +70,6 @@ export class AppComponent implements OnInit {
 
   queryByPeriod(form: NgForm): void {
     this.clear();
-    if (!form.valid){
-      this.addSingle("warn", "you left an empty field", "");
-      return;
-    }
     this.activityService.getActivitiesByPeriod(form.value.startDate, form.value.endDate).subscribe((response) => {
       this.activities = response;
       this.cd.detectChanges();
@@ -89,10 +81,6 @@ export class AppComponent implements OnInit {
 
   calculateMinutes(form: NgForm): void{    
     this.clear();    
-    if (!form.valid){
-      this.addSingle("warn", "you left an empty field", "");
-      return;
-    }
     this.activityService.getCategoriesMinutes(form.value.startDate, form.value.endDate).subscribe((response) => {     
       const list = document.getElementById("categoriesMinutes");
       if (list != undefined) {
@@ -100,17 +88,41 @@ export class AppComponent implements OnInit {
       } else {
         this.addSingle("error", "Internal error", "");
         return;
-      }
-      console.log(typeof response);
-      console.log(response);
-      
-      
+      }      
       for (let key of Object.keys(response)){
         list.innerHTML += `${key}: ${response[key]} min<br>`;
       }
     }, (error: HttpErrorResponse) => {
       this.addSingle("error", error.error, "");
     });
+  }
+
+  deleteActivity(activity: Activity): void{
+    this.clear();    
+    this.activityService.deleteActivity(activity.id).subscribe((response) => {
+      this.addSingle("success", response, `activity ${activity.title} deleted!`);
+      this.activities = this.activities.filter(a => a.id != activity.id);
+    }, (error: HttpErrorResponse) => {
+      this.addSingle("error", error.error, "");
+    });
+  }
+
+  updateActivity(form: NgForm): void{
+    this.clear();
+    this.activityService.updateActivity(form.value, this.updatedActivity!.id).subscribe((response) => {
+      this.addSingle("success", "Activity updated!", "");
+      this.activities = this.activities.map(a => (a.id == response.id) ? response : a);
+      this.displayUpdateActivityDialog = false;
+      this.cd.detectChanges();
+    }, (error: HttpErrorResponse) => {
+      this.addSingle("error", error.error, error.message);
+    })
+
+  }
+
+  setUpdateValues(activity: Activity): void{
+    this.updatedActivity = activity;
+    this.displayUpdateActivityDialog = true;
   }
 
   showActivityDialog() {
@@ -153,9 +165,7 @@ export class AppComponent implements OnInit {
         result = 0;
       }
       return (event.order! * result);
-    })
+    });
     
   }
-
-
 }
