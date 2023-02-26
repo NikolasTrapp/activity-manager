@@ -21,8 +21,8 @@ export class AppComponent implements OnInit {
   displayMinutesDialog: boolean = false;
   categories: Category[] = [];
   categoriesMinutes = [];
-  startDate = new Date().toISOString().substring(0, 16);
-  endDate = new Date().toISOString().substring(0, 16);
+  startDate = new Date().toISOString().substring(0, 11) + "00:00";
+  endDate = new Date().toISOString().substring(0, 11) + "00:00";
   
   selectedEntity: Category;
   
@@ -37,6 +37,8 @@ export class AppComponent implements OnInit {
       this.categories = response;
       this.selectedEntity = this.categories[0];
     });
+    console.log(new Date().toISOString().substring(0, 11));
+    
   }
 
   sendActivity(addForm: NgForm): void {

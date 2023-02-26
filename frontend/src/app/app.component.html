@@ -10,24 +10,20 @@
     <div class="p-toolbar-group-end">
         <form #queryPeriodForm="ngForm" (ngSubmit)="queryByPeriod(queryPeriodForm)">
             <div style="display: flex; align-items: center;">
-
                 <div style="margin: 0 10px;">
                     <span>Start date: </span>
                     <input [(ngModel)]="startDate" name="startDate" type="datetime-local" pInputText required="true">
                 </div>
-
                 <div style="margin: 0 10px;">
                     <span>End date: </span>
                     <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
                 </div>
-
                 <button type="submit" class="p-button p-button-success" icon="pi pi-filter" pButton
                     label="Send"></button>
             </div>
         </form>
     </div>
-
-    <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
+    
 </p-toolbar>
 <div style="display: flex;">
 
@@ -64,30 +60,36 @@
             <label for="title">Title</label>
             <input ngModel id="title" name="title" type="text" pInputText required="true">
         </div>
-
         <div>
             <label for="description">Description</label>
             <textarea pInputTextarea name="description" maxlength="255" ngModel required="true"></textarea>
         </div>
-
         <div>
             <label for="startDate">Start date</label>
             <input [(ngModel)]="startDate" name="startDate" type="datetime-local" pInputText required="true">
         </div>
-
         <div>
             <label for="endDate">End date</label>
             <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
         </div>
-
         <div>
             <label for="category">Select a category</label>
             <p-dropdown [options]="categories" name="category" appendTo="body" optionLabel="name"
                 [(ngModel)]="selectedEntity" (onItemClick)="onEntityClick($event)">
+                <ng-template pTemplate="selectedItem">
+                    <div class="category-item category-item-value " *ngIf="selectedEntity">
+                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=selectedEntity.color></div>
+                        <div>{{selectedEntity.name}}</div>
+                    </div>
+                </ng-template>
+                <ng-template let-category pTemplate="item">
+                    <div class="category-item">
+                        <div style="width: 5px; height: 100; margin-right: 5px;" [style.background-color]=category.color></div>
+                        <div>{{category.name}}</div>
+                    </div>
+                </ng-template>
             </p-dropdown>
-        </div>
-
-        <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
+        </div>      
         <button type="submit" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
@@ -100,13 +102,10 @@
             <label for="name">Name</label>
             <input ngModel id="name" name="name" type="text" pInputText required="true">
         </div>
-
         <div>
             <label for="color">Color</label>
             <input ngModel id="color" name="color" type="text" placeholder="In english" pInputText required="true">
-        </div>
-
-        <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
+        </div> 
         <button type="submit" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
@@ -118,16 +117,13 @@
             <label for="startDate">Start date</label>
             <input [(ngModel)]="startDate" name="startDate" type="datetime-local" pInputText required="true">
         </div>
-
         <div>
             <label for="endDate">End date</label>
             <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
         </div>
-
         <div id="categoriesMinutes">
         </div>
-
         <button type="submit" class="p-button p-button-success" pButton label="Search" [style]="{margin: '10px 0'}"></button>
     </form>
-    <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
 </p-dialog>
+<p-messages id="msg" [style]="{bottom: '0'}" [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
