@@ -26,6 +26,14 @@ export class ActivityService {
     return this.http.get<Activity[]>(`${this.apiServerUrl}/activity/findByTitle/${title}`);
   }
 
+  public getActivitiesByPeriod(startDate: Date, endDate: Date): Observable<Activity[]> {
+    return this.http.get<Activity[]>(`${this.apiServerUrl}/activity/findByPeriod/${startDate}/${endDate}`);
+  }
+
+  public getCategoriesMinutes(startDate: Date, endDate: Date): Observable<any> {
+    return this.http.get<any>(`${this.apiServerUrl}/activity/calculateMinutes/${startDate}/${endDate}`);
+  }
+
   public addActivity(activity: Activity): Observable<Activity> {
     return this.http.post<Activity>(`${this.apiServerUrl}/activity/add`, activity);
   }

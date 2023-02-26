@@ -4,9 +4,34 @@
             type="button" label="New activity" icon="pi pi-plus"></button>
         <button pButton [style]="{margin: '0 10px'}" (click)="showCategoryDialog()" class="p-button-success"
             type="button" label="New category" icon="pi pi-plus"></button>
+        <button pButton [style]="{margin: '0 10px'}" (click)="showMinutesDialog()" class="p-button-success"
+            type="button" label="Calculate category minutes" icon="pi pi-chart-bar"></button>
     </div>
-</p-toolbar>
+    <div class="p-toolbar-group-end">
+        <form #queryPeriodForm="ngForm" (ngSubmit)="queryByPeriod(queryPeriodForm)">
+            <div style="display: flex; align-items: center;">
 
+                <div style="margin: 0 10px;">
+                    <span>Start date: </span>
+                    <input [(ngModel)]="startDate" name="startDate" type="datetime-local" pInputText required="true">
+                </div>
+
+                <div style="margin: 0 10px;">
+                    <span>End date: </span>
+                    <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
+                </div>
+
+                <button type="submit" class="p-button p-button-success" icon="pi pi-filter" pButton
+                    label="Send"></button>
+            </div>
+        </form>
+    </div>
+
+    <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
+</p-toolbar>
+<div style="display: flex;">
+
+</div>
 <p-table (sortFunction)="customSort($event)" [value]="activities" [customSort]="true" [paginator]="true" [rows]="10">
     <ng-template pTemplate="header">
         <tr>
@@ -19,16 +44,14 @@
     </ng-template>
     <ng-template pTemplate="body" let-activity>
         <tr>
-            <td>{{convertDate(activity.startDate)}}</td>
-            <td>{{convertDate(activity.endDate)}}</td>
+            <td>{{activity.startDate | transformDate}}</td>
+            <td>{{activity.endDate | transformDate}}</td>
             <td>{{activity.title}}</td>
-            <td>{{activity.category.name}}</td>
+            <td [style.background-color]=activity.category.color>
+                {{activity.category.name}}
+            </td>
             <td>
-                <p-accordion>
-                    <p-accordionTab header="Description">
-                        {{activity.description}}
-                    </p-accordionTab>
-                </p-accordion>
+                {{activity.description}}
             </td>
         </tr>
     </ng-template>
@@ -39,22 +62,22 @@
     <form #activityForm="ngForm" (ngSubmit)="sendActivity(activityForm)">
         <div>
             <label for="title">Title</label>
-            <input ngModel id="title" name="title" type="text" pInputText required>
+            <input ngModel id="title" name="title" type="text" pInputText required="true">
         </div>
 
         <div>
             <label for="description">Description</label>
-            <input ngModel id="description" name="description" type="text" pInputText required>
+            <textarea pInputTextarea name="description" maxlength="255" ngModel required="true"></textarea>
         </div>
 
         <div>
             <label for="startDate">Start date</label>
-            <input ngModel #sd name="startDate" type="datetime-local" pInputText required>
+            <input [(ngModel)]="startDate" name="startDate" type="datetime-local" pInputText required="true">
         </div>
 
         <div>
             <label for="endDate">End date</label>
-            <input ngModel name="endDate" type="datetime-local" pInputText required>
+            <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
         </div>
 
         <div>
@@ -65,7 +88,7 @@
         </div>
 
         <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
-        <button type="submit" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+        <button type="submit" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
     </form>
 </p-dialog>
 
@@ -75,15 +98,36 @@
     <form #categoryForm="ngForm" (ngSubmit)="sendCategory(categoryForm)">
         <div>
             <label for="name">Name</label>
-            <input ngModel id="name" name="name" type="text" pInputText required>
+            <input ngModel id="name" name="name" type="text" pInputText required="true">
         </div>
 
         <div>
             <label for="color">Color</label>
-            <input ngModel id="color" name="color" type="text" placeholder="In english" pInputText required>
+            <input ngModel id="color" name="color" type="text" placeholder="In english" pInputText required="true">
         </div>
 
         <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
-        <button type="submit" pButton label="Send" [style]="{margin: '10px 0'}"></button>
+        <button type="submit" class="p-button p-button-success" pButton label="Send" [style]="{margin: '10px 0'}"></button>
     </form>
+</p-dialog>
+
+<p-dialog header="Query category minutes based on period" position="center" [(visible)]="displayMinutesDialog"
+    [draggable]="false" [style]="{width: '25vw'}">
+    <form #categoryMinutes="ngForm" (ngSubmit)="calculateMinutes(categoryMinutes)">
+        <div>
+            <label for="startDate">Start date</label>
+            <input [(ngModel)]="startDate" name="startDate" type="datetime-local" pInputText required="true">
+        </div>
+
+        <div>
+            <label for="endDate">End date</label>
+            <input [(ngModel)]="endDate" name="endDate" type="datetime-local" pInputText required="true">
+        </div>
+
+        <div id="categoriesMinutes">
+        </div>
+
+        <button type="submit" class="p-button p-button-success" pButton label="Search" [style]="{margin: '10px 0'}"></button>
+    </form>
+    <p-messages [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'"></p-messages>
 </p-dialog>

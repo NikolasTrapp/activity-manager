@@ -43,4 +43,13 @@ public class Activity implements Serializable {
         this.category = other.getCategory();
     }
 
+    public boolean checkPeriod(LocalDateTime startDate, LocalDateTime endDate){
+        return (this.startDate.isAfter(startDate) || this.startDate.isEqual(startDate)) &&
+                (this.endDate.isBefore(endDate) || this.endDate.isEqual(endDate));
+    }
+
+    public int getMinutes(){
+        return ((this.endDate.getHour() * 60) + this.endDate.getMinute()) - ((this.startDate.getHour() * 60) + this.startDate.getMinute());
+    }
+
 }

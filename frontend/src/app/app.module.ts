@@ -12,13 +12,16 @@ import {MessagesModule} from 'primeng/messages';
 import {DropdownModule} from 'primeng/dropdown';
 import {TableModule} from 'primeng/table';
 import {AccordionModule} from 'primeng/accordion';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { TransformDatePipe } from './transform-date.pipe';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TransformDatePipe
   ],
   imports: [
     BrowserModule,
@@ -34,7 +37,8 @@ import { AppComponent } from './app.component';
     MessagesModule,
     DropdownModule,
     TableModule,
-    AccordionModule
+    AccordionModule,
+    InputTextareaModule
     // MessageModule
   ],
   providers: [],

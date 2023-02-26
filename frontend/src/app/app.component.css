@@ -2,3 +2,9 @@ label{
     display: block;
     margin: 10px 0;
 }
+
+#categoriesMinutes{
+    margin: 5px 0;
+    font-size: large;
+
+}
